@@ -1,20 +1,15 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://employee-tracker-8wol.onrender.com/",
+  baseURL: "https://employee-tracker-backend.onrender.com/api/",
 });
 
-
-// Attach JWT token automatically
-API.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("access");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export default API;

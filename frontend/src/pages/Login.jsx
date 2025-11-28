@@ -17,29 +17,30 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // 1) Generate JWT Token
-      const res = await API.post("/token/", form);
-      const accessToken = res.data.access;
-      const refreshToken = res.data.refresh;
+      // Get JWT Tokens
+      const res = await API.post("token/", form);  // <<< no leading slash!
+      const access = res.data.access;
+      const refresh = res.data.refresh;
 
-      // Save tokens in correct format for axios interceptor
-      localStorage.setItem("access_token", accessToken);
-      localStorage.setItem("refresh_token", refreshToken);
+      // Save to LocalStorage
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
 
-      // 2) Fetch user details
-      const meRes = await API.get("/auth/me/");
-      const user = meRes.data;
+      // Fetch logged-in user details
+      const userResponse = await API.get("auth/me/");
+      const user = userResponse.data;
 
-      // Save to Redux store
-      dispatch(loginSuccess({ token: accessToken, user }));
+      // Save user in Redux
+      dispatch(loginSuccess({ token: access, user }));
 
-      // Save user locally too
+      // Store user in localStorage
       localStorage.setItem("user", JSON.stringify(user));
 
+      // Redirect after success
       window.location.href = "/";
     } catch (err) {
-      console.error(err);
-      alert("Invalid credentials");
+      console.error("Login error:", err.response?.data || err);
+      alert("Invalid credentials or server issue");
     } finally {
       setLoading(false);
     }
@@ -56,6 +57,7 @@ export default function Login() {
             placeholder="Username"
             onChange={handleChange}
             value={form.username}
+            required
           />
 
           <input
@@ -64,6 +66,7 @@ export default function Login() {
             placeholder="Password"
             onChange={handleChange}
             value={form.password}
+            required
           />
 
           <button type="submit" disabled={loading}>
