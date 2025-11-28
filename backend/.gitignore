@@ -1,0 +1,45 @@
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python cache
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Django & DB
+db.sqlite3
+*.log
+media/
+staticfiles/
+static/
+public/
+
+# Environment & secrets
+.env
+.env.local
+.env.production
+*.pem
+
+# IDE / Editor
+.vscode/
+.idea/
+*.iml
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+coverage/
+htmlcov/
