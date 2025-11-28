@@ -17,30 +17,32 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Get JWT Tokens
-      const res = await API.post("token/", form);  // <<< no leading slash!
-      const access = res.data.access;
-      const refresh = res.data.refresh;
+      // ---- 1) Get JWT tokens ----
+      const res = await API.post("/token/", form);
 
-      // Save to LocalStorage
-      localStorage.setItem("access", access);
-      localStorage.setItem("refresh", refresh);
+      const accessToken = res.data.access;
+      const refreshToken = res.data.refresh;
 
-      // Fetch logged-in user details
-      const userResponse = await API.get("auth/me/");
-      const user = userResponse.data;
+      // ---- 2) Save tokens in correct key format ----
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
 
-      // Save user in Redux
-      dispatch(loginSuccess({ token: access, user }));
+      // ---- 3) Fetch logged-in user data ----
+      const meRes = await API.get("/auth/me/");
+      const user = meRes.data;
 
-      // Store user in localStorage
+      // ---- 4) Store in Redux ----
+      dispatch(loginSuccess({ accessToken, refreshToken, user }));
+
+      // ---- 5) Store user locally optional ----
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Redirect after success
-      window.location.href = "/";
+      // ---- Redirect to Dashboard ----
+      window.location.href = "/dashboard";
+
     } catch (err) {
-      console.error("Login error:", err.response?.data || err);
-      alert("Invalid credentials or server issue");
+      console.error("Login error:", err);
+      alert("Invalid username or password");
     } finally {
       setLoading(false);
     }
@@ -57,7 +59,6 @@ export default function Login() {
             placeholder="Username"
             onChange={handleChange}
             value={form.username}
-            required
           />
 
           <input
@@ -66,7 +67,6 @@ export default function Login() {
             placeholder="Password"
             onChange={handleChange}
             value={form.password}
-            required
           />
 
           <button type="submit" disabled={loading}>
