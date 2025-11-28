@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: employee-tracker-backend
+    env: python
+    region: oregon
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn tasktracker.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: False
